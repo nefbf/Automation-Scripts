@@ -19,6 +19,9 @@ MacAddress of target machine to wake.
  
 .EXAMPLE
 Wake A0DEF169BE02
+
+.Example
+Wake -MacAddresss A0DEF169BE02 -InterfaceAlias vEthernet*
  
 .INPUTS
 None
@@ -32,11 +35,15 @@ Make sure the MAC addresses supplied don't contain "-" or ".".
  
  
 param( [Parameter(Mandatory=$true, HelpMessage="MAC address of target machine to wake up")]
-       [string] $MacAddress )
+       [string] $MacAddress,
+       
+       [Parameter(Mandatory=$true, HelpMessage="Enter the Interface Alias to pick one network interface `n  Ex. vEthernet*")] 
+       [string] $InterfaceAlias
+       )
  
  
 Set-StrictMode -Version Latest
- 
+
 function Send-Packet([string]$MacAddress)
 {
     <#
@@ -52,15 +59,15 @@ function Send-Packet([string]$MacAddress)
  
     try
     {
-        # The following could potentially return an array - do your own error checking if needed.
-        $IPAddress = Get-NetIPAddress -AddressFamily IPv4 -PrefixLength 24
+        # The following could potentially return an array - do your own error checking if needed.  Had to add the "InterfaceAlias" to be able to narrow it down to one (1) network adapater.
+        $IPAddress = Get-NetIPAddress -AddressFamily IPv4 -PrefixLength 24 -InterfaceAlias $InterfaceAlias
         # Calculate directed broadcast address for subnet
         $Broadcast = [Net.IPAddress]::new(
             ((
                     [Net.IPAddress]::Parse( $IPAddress.IPAddress).Address `
-                    -band [uint]::MaxValue `
+                    -band [uint32]::MaxValue `
                     -shr (32 - $IPAddress.PrefixLength)) `
-                    -bor ([uint]::MaxValue `
+                    -bor ([uint32]::MaxValue `
                     -shl $IPAddress.PrefixLength)
             )).IPAddressToString
 
@@ -92,3 +99,5 @@ function Send-Packet([string]$MacAddress)
 ## Send magic packet to wake machine
 Write-Output "Sending magic packet to $MacAddress"
 Send-Packet $MacAddress
+
+# 001fc69c984e
