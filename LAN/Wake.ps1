@@ -2,8 +2,8 @@
 ##
 ## Wake.ps1, v1.0, 2013
 ##
-## Adapted by Ammaar Limbada
-## Original Author: Matthijs ten Seldam, Microsoft (see: http://blogs.technet.com/matthts)
+## Forked from by Ammaar Limbada (see: https://gist.github.com/alimbada/4949168)
+## Original Author: Matthijs ten Seldam, Microsoft (see: https://learn.microsoft.com/en-us/archive/blogs/matthts/wakeup-machines-a-powershell-script-for-wake-on-lan)
 ##
 #######################################################
  
